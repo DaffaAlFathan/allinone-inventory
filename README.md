@@ -27,7 +27,7 @@ Stateful widget adalah widget yang memiliki perubahan internal atau mutable stat
 
 - SnackBar untuk menampilkan pesan sementara ketika kartu diklik
 
-- Container untuk mengatur tata letak dan dekorasi widget anak di dalamnya. Anda dapat mengatur properti-properti seperti warna latar 
+- Container untuk mengatur tata letak dan dekorasi widget anak di dalamnya. Programmer dapat mengatur properti-properti seperti warna latar 
 belakang, padding, margin, dan sebagainya menggunakan widget Container
 
 - InkWell untuk memberi efek respons ketika kartu diklik. Biasanya digunakan di sekitar widget lain, seperti Text, Image, atau Container
