@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:allinone_inventory/widgets/left_drawer.dart';
+import 'package:allinone_inventory/widgets/shop_card.dart';
+import 'package:allinone_inventory/screens/shoplist_form.dart';
 
 class MyHomePage extends StatelessWidget {
     MyHomePage({Key? key}) : super(key: key);
@@ -15,7 +18,11 @@ class MyHomePage extends StatelessWidget {
         title: const Text(
           'AllInOne Inventory',
         ),
+        backgroundColor: Colors.indigo,
+        foregroundColor: Colors.white,
       ),
+      // Masukkan drawer sebagai parameter nilai drawer dari widget Scaffold
+      drawer: const LeftDrawer(),
       body: SingleChildScrollView(
         // Widget wrapper yang dapat discroll
         child: Padding(
@@ -66,55 +73,3 @@ class MyHomePage extends StatelessWidget {
   // always marked "final".
 }
 
-class ShopItem {
-  final String name;
-  final Color color;
-  final IconData icon;
-
-  ShopItem(this.name, this.color, this.icon);
-}
-
-class ShopCard extends StatelessWidget {
-  final ShopItem item;
-
-  const ShopCard(this.item, {super.key}); // Constructor
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: item.color,
-      child: InkWell(
-        // Area responsive terhadap sentuhan
-        onTap: () {
-          // Memunculkan SnackBar ketika diklik
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-                content: Text("Kamu telah menekan tombol ${item.name}!")));
-        },
-        child: Container(
-          // Container untuk menyimpan Icon dan Text
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

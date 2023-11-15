@@ -1,3 +1,306 @@
+# Tugas 8
+## Perbedaan antara Navigator.push() dan Navigator.pushReplacement(), serta contoh mengenai penggunaan kedua metode tersebut yang tepat
+Perbedaan kedua method tersebut terletak pada apa yang dilakukan kepada route yang berada pada atas stack. push() akan menambahkan route baru diatas route yang sudah ada pada atas stack sehingga user dapat kembali ke halaman sebelumnya, sedangkan pushReplacement() menggantikan route yang sudah ada pada atas stack dengan route baru tersebut sehingga user tidak dapat kembali ke halaman sebelumnya.
+Penggunaan push():
+```
+Navigator.push(context, MaterialPageRoute(builder: (context) => PageName()))
+```
+Penggunaan pushReplacement():
+```
+Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PageName()))
+```
+
+## Penjelasan masing-masing layout widget pada Flutter dan konteks penggunaannya
+1. Container digunakan untuk mengelompokkan dan mengatur widget lainnya. Ini sering digunakan sebagai wadah untuk widget lain dan dapat dikonfigurasi dengan berbagai properti seperti padding, margin, dan decoration.
+
+2. Row dan Column digunakan untuk mengatur widget secara horizontal (Row) atau vertikal (Column). Mereka cocok untuk menyusun widget secara berurutan atau sejajar.
+
+3. ListView digunakan untuk menampilkan daftar widget secara berurutan, baik secara horizontal maupun vertikal. Cocok untuk daftar panjang atau dinamis.
+
+4. GridView digunakan untuk menampilkan data dalam bentuk grid. Cocok untuk menampilkan koleksi item dalam baris dan kolom.
+
+5. Stack memungkinkan penumpukan widget di atas satu sama lain. Berguna ketika programmer ingin menumpuk widget, seperti menempatkan gambar di atas teks.
+
+6. Expanded digunakan untuk memberikan fleksibilitas dalam mendistribusikan ruang yang tersedia dalam sebuah layout. Ini digunakan di dalam widget.
+
+7. SizedBox digunakan untuk menentukan ukuran widget dengan tepat. Ini dapat digunakan untuk memberikan batasan ukuran pada widget tertentu.
+
+8. Card digunakan untuk membuat kartu material yang umumnya digunakan untuk menampilkan informasi terkait dalam kotak yang elegan.
+
+9. Wrap digunakan ketika programmer ingin meletakkan widget secara horizontal atau vertikal, tetapi jika tidak cukup ruang, widget tersebut akan berpindah ke baris atau kolom berikutnya.
+
+10. Align digunakan untuk mengatur posisi anak widget relatif terhadap widget induk. Ini berguna untuk mengatur posisi widget di dalam layout.
+
+11. Flexible digunakan untuk memberikan widget proporsi fleksibel dari ruang yang tersedia. Ini sering digunakan bersama dengan `Row`, `Column`, atau `Flex`.
+
+12. AspectRatio digunakan untuk memastikan bahwa widget memiliki rasio aspek tertentu (tinggi:lebar). Ini berguna untuk mempertahankan proporsi widget.
+
+## Elemen input pada form yang dipakai pada tugas kali ini dan penjelasan
+TextFormField digunakan untuk menerima input nama item, harga, dan deskripsi pada form untuk tambah item. Di dalamnya, ada validator untuk memastikan bahwa input tidak kosong dan sesuai dengan yang diminta, yaitu input harga harus berupa angka.
+
+## Penerapan clean architecture pada aplikasi Flutter
+Clean Architecture adalah pendekatan untuk mengorganisir dan merancang kode dalam aplikasi sehingga menghasilkan struktur yang bersih, terpisah, dan mudah diuji. Dalam konteks Flutter, penerapan Clean Architecture melibatkan pembagian kode ke dalam beberapa lapisan utama.
+
+Penerapan clean architecture pada aplikasi Flutter merupakan prinsip seperti Separation of Concern pada MVP, MVT, atau MVCC.
+Pembagiannya sebagai berikut:
+
+Domain: Entities, Usecases, Repositories
+App: View, Controller, Presenter, Extra
+Data: Repositories, Models, Mappers, Extra
+Device: Devices, Extra
+
+## Implementasi
+1. Tambahkan endDrawer pada Scaffold di dalam file menu.dart untuk membuat drawer pada aplikasi sehingga dapat mengakses berbagai macam halaman dengan mudah
+```
+return Scaffold(
+  appBar: ...
+  endDrawer: const LeftDrawer(),
+  body: ...
+```
+
+2. Buat file baru dengan nama left_drawer.dart yang berisi kode dibawah ini
+```
+import 'package:flutter/material.dart';
+import 'package:allinone_inventory/screens/menu.dart';
+import 'package:allinone_inventory/screens/shoplist_form.dart';
+
+class LeftDrawer extends StatelessWidget {
+  const LeftDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          const DrawerHeader(
+            // TODO: Bagian drawer header
+            decoration: BoxDecoration(
+                color: Colors.indigo,
+            ),
+            child: Column(
+                children: [
+                    Text(
+                        'AllInOne Inventory',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                        ),
+                    ),
+                    Padding(padding: EdgeInsets.all(10)),
+                    Text(
+                        "Catat seluruh barangmu di sini!",
+                        // TODO: Tambahkan gaya teks dengan center alignment, font ukuran 15, warna putih, dan weight biasa
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                        ),
+                    ),
+                ],
+            ),
+          ),
+          // TODO: Bagian routing
+          ListTile(
+            leading: const Icon(Icons.home_outlined),
+            title: const Text('Halaman Utama'),
+            // Bagian redirection ke MyHomePage
+            onTap: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyHomePage(),
+                    ));
+                },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add_shopping_cart),
+            title: const Text('Tambah Item'),
+            // Bagian redirection ke ShopFormPage
+            onTap: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ShopFormPage(),
+                    ));
+                },
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+3. Buat halaman form untuk menambah item pada file shoplist_form.dart dengan StatefulWidget InventoryFormPage seperti kode dibawah ini
+```
+import 'package:flutter/material.dart';
+// TODO: Impor drawer yang sudah dibuat sebelumnya
+import 'package:allinone_inventory/widgets/left_drawer.dart';
+
+class ShopFormPage extends StatefulWidget {
+    const ShopFormPage({super.key});
+
+    @override
+    State<ShopFormPage> createState() => _ShopFormPageState();
+}
+
+class _ShopFormPageState extends State<ShopFormPage> {
+    final _formKey = GlobalKey<FormState>();
+    String _name = "";
+    int _price = 0;
+    String _description = "";
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Center(
+              child: Text(
+                'Form Tambah Item',
+              ),
+            ),
+            backgroundColor: Colors.indigo,
+            foregroundColor: Colors.white,
+          ),
+          // TODO: Tambahkan drawer yang sudah dibuat di sini
+          body: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: "Nama Item",
+                            labelText: "Nama Item",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                          onChanged: (String? value) {
+                            setState(() {
+                                _name = value!;
+                            });
+                          },
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                                return "Nama tidak boleh kosong!";
+                            }
+                            return null;
+                            },
+                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: "Harga",
+                            labelText: "Harga",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                          onChanged: (String? value) {
+                            setState(() {
+                                _price = int.parse(value!);
+                            });
+                          },
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                                return "Harga tidak boleh kosong!";
+                            }
+                            if (int.tryParse(value) == null) {
+                                return "Harga harus berupa angka!";
+                            }
+                            return null;
+                            },
+                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            hintText: "Deskripsi",
+                            labelText: "Deskripsi",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                          onChanged: (String? value) {
+                            setState(() {
+                                _description = value!;
+                            });
+                          },
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                                return "Deskripsi tidak boleh kosong!";
+                            }
+                            return null;
+                            },
+                          ),
+                      ),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.indigo),
+                            ),
+                            onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('Item berhasil tersimpan'),
+                                        content: SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                            Text('Nama: $_name'),
+                                            // TODO: Munculkan value-value lainnya
+                                            Text('Harga: $_price'),
+                                            Text('Deskripsi: $_description'),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('OK'),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                                _formKey.currentState!.reset();
+                            },
+                            child: const Text(
+                                "Save",
+                                style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ]
+                )
+            ),
+          ),
+        );
+    }
+}
+```
+
 # Tugas 7
 ## Perbedaan utama antara stateless dan stateful widget dalam konteks pengembangan aplikasi Flutter
 Stateless widget adalah widget yang tidak memiliki perubahan internal atau mutable state. Stateless widget bersifat statis dan tidak dapat mengubah tampilan atau data mereka sendiri setelah dibangun. Stateless widget ideal untuk bagian tampilan yang tidak bergantung pada perubahan data selama masa hidup widget.
