@@ -1,3 +1,130 @@
+# Tugas 9
+## Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+Kita bisa melakukan pengambilan data JSON tanpa membuat model terlebih dahulu. Approach ini disebut sebagai "parsing" JSON. Jika data yang diambil cukup sederhana dan tidak memerlukan manipulasi yang rumit, maka tidak perlu membuat model. Tetapi ketika struktur data menjadi kompleks, membuat model dapat membantu dalam memahami dan memanipulasi data dengan lebih baik. Model dapat menyederhanakan proses pembacaan dan penggunaan data.
+
+## Fungsi dari CookieRequest dan alasan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter
+CookieRequest adalah kelas yang dapat digunakan dalam Flutter untuk mengelola permintaan HTTP dengan manipulasi cookie. Instance CookieRequest perlu dibagikan ke semua komponen dalam aplikasi Flutter karena cookies sering kali dibutuhkan untuk menjaga keadaan login, sesi, atau informasi pengguna lainnya di aplikasi web. Pengelolaan cookie memerlukan instance CookieRequest yang sama di seluruh aplikasi untuk memastikan konsistensi dan akses yang benar terhadap informasi yang disimpan.
+
+## Mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter
+Pertama, data JSON diambil melalui API atau dari penyimpanan lokal. Kemudian, Flutter menggunakan package seperti http untuk mengirim HTTP request dan mendapatkan JSON response dari server. Data JSON kemudian di-decode menggunakan library seperti dart:convert untuk mengubahnya menjadi objek Dart. Setelah data di-decode, nilai-nilai tersebut dapat digunakan dalam Flutter untuk mengisi widget, atau untuk meng-update state dan menampilkan informasi pada interface pengguna menggunakan widget.
+
+## Mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter
+1. Buat instance CookieRequest menggunakan pbp_django_auth di Flutter dan simpan dalam variabel request
+```
+final request = context.watch<CookieRequest>();
+```
+
+2. Pada halaman login.dart saat pengguna mengirimkan form, gunakan instance request untuk melakukan permintaan login ke server Django
+```
+final response = await request.login(
+  "http://127.0.0.1:8000/auth/login/",
+  {
+    'username': username,
+    'password': password
+  }
+);
+```
+
+3. Di server Django, proses permintaan login dalam views
+```
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import authenticate, login as auth_login
+
+@csrf_exempt
+def login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            auth_login(request, user)
+            # Status login sukses.
+            return JsonResponse({
+                "username": user.username,
+                "status": True,
+                "message": "Login sukses!"
+                # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
+            }, status=200)
+        else:
+            return JsonResponse({
+                "status": False,
+                "message": "Login gagal, akun dinonaktifkan."
+            }, status=401)
+
+    else:
+        return JsonResponse({
+            "status": False,
+            "message": "Login gagal, periksa kembali email atau kata sandi."
+        }, status=401)
+```
+
+## Seluruh widget yang dipakai pada tugas ini dan fungsinya masing-masing
+- TextField. Widget ini digunakan untuk menerima input teks dari pengguna, lebih tepatnya untuk menerima username dan password saat proses login dan registrasi.
+
+- SizedBox. Widget ini digunakan untuk memberikan ruang tertentu atau pemisah antara elemen-elemen dalam antarmuka pengguna, lebih tepatnya untuk memberikan jarak atau ruang antara widget TextField username dan password.
+
+- ElevatedButton. Widget ini menciptakan tombol dengan efek elevasi yang terjadi saat tombol ditekan, lebih tepatnya sebagai tombol submit pada proses login dan registrasi, memicu aksi yang sesuai ketika ditekan.
+
+- TextButton. Widget ini menciptakan tombol berupa teks tanpa latar belakang, lebih tepatnya sebagai tombol registrasi, memberikan opsi alternatif selain login.
+
+- ListView.builder. Widget ini digunakan untuk membuat daftar item yang dapat discroll, lebih tepatnya untuk menampilkan daftar item yang ada, seperti daftar hasil pencarian atau item dalam kategori tertentu.
+
+- Text Widget. ini digunakan untuk menampilkan teks di antarmuka pengguna, lebih tepatnya untuk menampilkan teks detail saat item pada daftar item ditekan, memberikan informasi lebih lanjut tentang item tersebut.
+
+## Implementasi
+### Bagian Django
+- Buat django-app bernama 'authentication'.
+
+- Tambahkan 'authentication' ke INSTALLED_APPS.
+
+- Install django-cors-headers.
+
+- Tambahkan 'corsheaders' ke INSTALLED_APPS.
+
+- Tambahkan middleware CorsMiddleware.
+
+- Tambahkan variabel berikut.
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+
+- Buat metode view untuk login pada authentication/views.py.
+
+- Buat file urls.py di folder authentication untuk routing login.
+
+- Tambahkan path('auth/', include('authentication.urls')) di main project urls.py.
+
+- Buat metode view untuk logout pada authentication/views.py.
+
+- Tambahkan path('logout/', logout, name='logout') di authentication/urls.py.
+
+### Bagian Flutter
+- Install package provider dan pbp_django_auth.
+
+- Modifikasi root widget di main.dart menggunakan Provider.
+
+- Buat file login.dart di lib\screens untuk halaman login.
+
+- Integrasi dengan Django pada main.dart.
+
+- Gunakan Quicktype untuk membuat model Dart dari JSON Django.
+
+- Tambahkan package http untuk melakukan HTTP request.
+
+- Fetch data dari Django untuk ditampilkan di aplikasi Flutter.
+
+- Hubungkan halaman shoplist_form.dart dengan CookieRequest.
+
+- Perbarui tombol tambah untuk mengirim data ke Django.
+
+- Tambahkan fungsi logout di proyek Django dan implementasikan di aplikasi Flutter.
+
+- Hubungkan fungsi logout dengan widget Inkwell di shop_card.dart.
+
 # Tugas 8
 ## Perbedaan antara Navigator.push() dan Navigator.pushReplacement(), serta contoh mengenai penggunaan kedua metode tersebut yang tepat
 Perbedaan kedua method tersebut terletak pada apa yang dilakukan kepada route yang berada pada atas stack. push() akan menambahkan route baru diatas route yang sudah ada pada atas stack sehingga user dapat kembali ke halaman sebelumnya, sedangkan pushReplacement() menggantikan route yang sudah ada pada atas stack dengan route baru tersebut sehingga user tidak dapat kembali ke halaman sebelumnya.
